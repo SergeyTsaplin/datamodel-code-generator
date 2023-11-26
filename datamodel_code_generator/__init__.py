@@ -300,6 +300,7 @@ def generate(
     custom_file_header_path: Optional[Path] = None,
     custom_formatters: Optional[List[str]] = None,
     custom_formatters_kwargs: Optional[Dict[str, Any]] = None,
+    disallow_single_symbols_in_snake_case: Optional[bool] = None,
 ) -> None:
     remote_text_cache: DefaultPutDict[str, str] = DefaultPutDict()
     if isinstance(input_, str):
@@ -456,6 +457,7 @@ def generate(
         known_third_party=data_model_types.known_third_party,
         custom_formatters=custom_formatters,
         custom_formatters_kwargs=custom_formatters_kwargs,
+        disallow_single_symbols_in_snake_case=disallow_single_symbols_in_snake_case,
         **kwargs,
     )
 

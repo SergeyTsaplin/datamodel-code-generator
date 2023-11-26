@@ -27,11 +27,7 @@ from urllib.parse import ParseResult
 from pydantic import BaseModel
 
 from datamodel_code_generator.format import CodeFormatter, PythonVersion
-from datamodel_code_generator.imports import (
-    IMPORT_ANNOTATIONS,
-    Import,
-    Imports,
-)
+from datamodel_code_generator.imports import IMPORT_ANNOTATIONS, Import, Imports
 from datamodel_code_generator.model import pydantic as pydantic_model
 from datamodel_code_generator.model import pydantic_v2 as pydantic_model_v2
 from datamodel_code_generator.model.base import (
@@ -388,6 +384,7 @@ class Parser(ABC):
         known_third_party: Optional[List[str]] = None,
         custom_formatters: Optional[List[str]] = None,
         custom_formatters_kwargs: Optional[Dict[str, Any]] = None,
+        disallow_single_symbols_in_snake_case: Optional[bool] = None,
     ) -> None:
         self.data_type_manager: DataTypeManager = data_type_manager_type(
             python_version=target_python_version,
@@ -484,6 +481,7 @@ class Parser(ABC):
             special_field_name_prefix=special_field_name_prefix,
             remove_special_field_name_prefix=remove_special_field_name_prefix,
             capitalise_enum_members=capitalise_enum_members,
+            disallow_single_symbols_in_snake_case=disallow_single_symbols_in_snake_case,
         )
         self.class_name: Optional[str] = class_name
         self.wrap_string_literal: Optional[bool] = wrap_string_literal

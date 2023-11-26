@@ -175,6 +175,17 @@ class Config(BaseModel):
         return values
 
     @model_validator(mode='after')
+    def validate_disallow_single_symbols_in_snake_case(
+        cls, values: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        if values.get('disallow_single_symbols_in_snake_case') is not None:
+            if not values.get('snake_case_field'):
+                raise Error(
+                    '`--disallow-single-symbols-in-snake-case` can not be used without `--snake-case-field`.'
+                )
+        return values
+
+    @model_validator(mode='after')
     def validate_custom_file_header(cls, values: Dict[str, Any]) -> Dict[str, Any]:
         if values.get('custom_file_header') and values.get('custom_file_header_path'):
             raise Error(
@@ -294,6 +305,7 @@ class Config(BaseModel):
     custom_file_header_path: Optional[Path] = None
     custom_formatters: Optional[List[str]] = None
     custom_formatters_kwargs: Optional[TextIOBase] = None
+    disallow_single_symbols_in_snake_case: Optional[bool] = None
 
     def merge_args(self, args: Namespace) -> None:
         set_args = {
@@ -488,6 +500,7 @@ def main(args: Optional[Sequence[str]] = None) -> Exit:
             custom_file_header_path=config.custom_file_header_path,
             custom_formatters=config.custom_formatters,
             custom_formatters_kwargs=custom_formatters_kwargs,
+            disallow_single_symbols_in_snake_case=config.disallow_single_symbols_in_snake_case,
         )
         return Exit.OK
     except InvalidClassNameError as e:

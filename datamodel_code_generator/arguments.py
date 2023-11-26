@@ -308,6 +308,12 @@ field_options.add_argument(
     default=None,
 )
 field_options.add_argument(
+    '--disallow-single-symbols-in-snake-case',
+    help='Disallow single symbols in snake-case',
+    action='store_true',
+    default=None,
+)
+field_options.add_argument(
     '--special-field-name-prefix',
     help="Set field name prefix when first character can't be used as Python field name (default:  `field`)",
     default=None,

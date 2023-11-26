@@ -27,9 +27,7 @@ from typing import (
 from urllib.parse import ParseResult
 from warnings import warn
 
-from pydantic import (
-    Field,
-)
+from pydantic import Field
 
 from datamodel_code_generator import (
     InvalidClassNameError,
@@ -424,6 +422,7 @@ class JsonSchemaParser(Parser):
         known_third_party: Optional[List[str]] = None,
         custom_formatters: Optional[List[str]] = None,
         custom_formatters_kwargs: Optional[Dict[str, Any]] = None,
+        disallow_single_symbols_in_snake_case: Optional[bool] = None,
     ) -> None:
         super().__init__(
             source=source,
@@ -489,6 +488,7 @@ class JsonSchemaParser(Parser):
             known_third_party=known_third_party,
             custom_formatters=custom_formatters,
             custom_formatters_kwargs=custom_formatters_kwargs,
+            disallow_single_symbols_in_snake_case=disallow_single_symbols_in_snake_case,
         )
 
         self.remote_object_cache: DefaultPutDict[str, Dict[str, Any]] = DefaultPutDict()

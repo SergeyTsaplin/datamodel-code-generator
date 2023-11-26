@@ -180,12 +180,16 @@ def context_variable(
 
 _UNDER_SCORE_1: Pattern[str] = re.compile(r'([^_])([A-Z][a-z]+)')
 _UNDER_SCORE_2: Pattern[str] = re.compile('([a-z0-9])([A-Z])')
+_UNDER_SCORE_3: Pattern[str] = re.compile('([_])([a-z0-9])([_])')
 
 
 @lru_cache()
-def camel_to_snake(string: str) -> str:
+def camel_to_snake(string: str, *, disallow_single_symbols: bool = False) -> str:
     subbed = _UNDER_SCORE_1.sub(r'\1_\2', string)
-    return _UNDER_SCORE_2.sub(r'\1_\2', subbed).lower()
+    subbed = _UNDER_SCORE_2.sub(r'\1_\2', subbed).lower()
+    if disallow_single_symbols:
+        subbed = _UNDER_SCORE_3.sub(r'\1\2', subbed)
+    return subbed
 
 
 class FieldNameResolver:
@@ -198,6 +202,7 @@ class FieldNameResolver:
         special_field_name_prefix: Optional[str] = None,
         remove_special_field_name_prefix: bool = False,
         capitalise_enum_members: bool = False,
+        disallow_single_symbols_in_snake_case: bool = False,
     ):
         self.aliases: Mapping[str, str] = {} if aliases is None else {**aliases}
         self.empty_field_name: str = empty_field_name or '_'
@@ -208,6 +213,9 @@ class FieldNameResolver:
         )
         self.remove_special_field_name_prefix: bool = remove_special_field_name_prefix
         self.capitalise_enum_members: bool = capitalise_enum_members
+        self.disallow_single_symbols_in_snake_case = (
+            disallow_single_symbols_in_snake_case
+        )
 
     @classmethod
     def _validate_field_name(cls, field_name: str) -> bool:
@@ -249,7 +257,9 @@ class FieldNameResolver:
             or self.snake_case_field
             and not ignore_snake_case_field
         ):
-            name = camel_to_snake(name)
+            name = camel_to_snake(
+                name, disallow_single_symbols=self.disallow_single_symbols_in_snake_case
+            )
         count = 1
         if iskeyword(name) or not self._validate_field_name(name):
             name += '_'
@@ -354,6 +364,7 @@ class ModelResolver:
         special_field_name_prefix: Optional[str] = None,
         remove_special_field_name_prefix: bool = False,
         capitalise_enum_members: bool = False,
+        disallow_single_symbols_in_snake_case: Optional[bool] = None,
     ) -> None:
         self.references: Dict[str, Reference] = {}
         self._current_root: Sequence[str] = []
@@ -383,6 +394,8 @@ class ModelResolver:
                 capitalise_enum_members=capitalise_enum_members
                 if k == ModelType.ENUM
                 else False,
+                disallow_single_symbols_in_snake_case=disallow_single_symbols_in_snake_case
+                or False,
             )
             for k, v in merged_field_name_resolver_classes.items()
         }

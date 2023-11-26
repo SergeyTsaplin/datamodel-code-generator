@@ -2,7 +2,7 @@ from pathlib import PurePosixPath, PureWindowsPath
 
 import pytest
 
-from datamodel_code_generator.reference import get_relative_path
+from datamodel_code_generator.reference import camel_to_snake, get_relative_path
 
 
 @pytest.mark.parametrize(
@@ -47,3 +47,21 @@ def test_get_relative_path_windows(
     assert PureWindowsPath(
         get_relative_path(PureWindowsPath(base_path), PureWindowsPath(target_path))
     ) == PureWindowsPath(expected)
+
+
+@pytest.mark.parametrize(
+    'camel_case,disallow_single_symbols,snake_case',
+    [
+        ('IP', True, 'ip'),
+        ('someCamelCased', True, 'some_camel_cased'),
+        ('podIPs', True, 'pod_ips'),
+        ('IP', False, 'ip'),
+        ('someCamelCased', False, 'some_camel_cased'),
+        ('podIPs', False, 'pod_i_ps'),
+    ],
+)
+def test_camel_to_snake(camel_case, disallow_single_symbols, snake_case) -> None:
+    assert (
+        camel_to_snake(camel_case, disallow_single_symbols=disallow_single_symbols)
+        == snake_case
+    )

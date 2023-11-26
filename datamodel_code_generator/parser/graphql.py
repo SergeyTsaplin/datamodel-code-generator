@@ -37,11 +37,7 @@ from datamodel_code_generator.parser.base import (
     escape_characters,
 )
 from datamodel_code_generator.reference import ModelType, Reference
-from datamodel_code_generator.types import (
-    DataTypeManager,
-    StrictTypes,
-    Types,
-)
+from datamodel_code_generator.types import DataTypeManager, StrictTypes, Types
 
 try:
     import graphql
@@ -156,6 +152,7 @@ class GraphQLParser(Parser):
         known_third_party: Optional[List[str]] = None,
         custom_formatters: Optional[List[str]] = None,
         custom_formatters_kwargs: Optional[Dict[str, Any]] = None,
+        disallow_single_symbols_in_snake_case: Optional[bool] = None,
     ) -> None:
         super().__init__(
             source=source,
@@ -221,6 +218,7 @@ class GraphQLParser(Parser):
             known_third_party=known_third_party,
             custom_formatters=custom_formatters,
             custom_formatters_kwargs=custom_formatters_kwargs,
+            disallow_single_symbols_in_snake_case=disallow_single_symbols_in_snake_case,
         )
 
         self.data_model_scalar_type = data_model_scalar_type
